@@ -10,7 +10,6 @@ namespace Bank
 {
     internal class FactoryUser
     {
-        BankMenu menu = new BankMenu();
         public IUser CreateUser(string userType, string name, string password, double wallet = 0)
         {
             if (userType == "1")
@@ -20,7 +19,7 @@ namespace Bank
                 customer.Password = password;
                 customer.Wallet = wallet;
                 customer.id = GenerateRandomId();
-                menu.addCustomer(customer);
+                SingeltonCustomer.Instance.AddCustomer(customer);
 
                 return customer;
             }
@@ -30,7 +29,7 @@ namespace Bank
                 admin.Name = name;
                 admin.Password = password;
                 admin.id = GenerateRandomId();
-                menu.addCustomer(admin);
+                SingeltonAdmin.Instance.AddAdmin(admin);
 
                 return admin;
             }
@@ -40,12 +39,33 @@ namespace Bank
         {
             string id = "";
             Random rnd = new Random();
-            for (int i = 0; i < 4; i++) 
+            bool breakLoop = false;
+            while (breakLoop == false)
             {
-                int number = rnd.Next(1, 9);
-                id += number.ToString();
+                breakLoop = true;
+                for (int i = 0; i < 4; i++)
+                {
+                    int number = rnd.Next(1, 9);
+                    id += number.ToString();
+                }
+                id = id.Trim();
+                foreach (var item in SingeltonAdmin.Instance.AdminList())
+                {
+                    if(item.id == id)
+                    {
+                        breakLoop = false;
+                        id = "";
+                    }
+                }
+                foreach (var item in SingeltonCustomer.Instance.CustomerList())
+                {
+                    if (item.id == id)
+                    {
+                        breakLoop = false;
+                        id = "";
+                    }
+                }
             }
-            id = id.Trim();
             return id;
         }
     }

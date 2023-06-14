@@ -8,34 +8,35 @@ using System.Threading.Tasks;
 namespace Bank
 {
     internal class WithdrawMenu
-    {
-        private readonly BankMenu bank;
-        private readonly ExecuteWithdraw executeWithdraw;
-        Customer saveCustomer;
-        public WithdrawMenu(BankMenu bank, ExecuteWithdraw executeWithdraw)
-        {
-            this.bank = bank;
-            this.executeWithdraw = executeWithdraw;
-        }
+    {        
+        Customer saveCustomer;  
 
-        public void WithDraw()
+        public void TrancactionPage(int direction)
         {
-            string id;
-            string password;
+            string id = "";
+            string password = "";
             bool isLoggedIn = false;
-            List<Customer> customerList = bank.CustomerList();
 
             while (isLoggedIn == false)
             {
                 Console.Clear();
-                Console.WriteLine("Uttag\n");
-                Console.WriteLine("Ditt ID: ");
+                foreach (var item in SingeltonCustomer.Instance.CustomerList())
+                {
+                    Console.WriteLine(item.Name + ". ID: " + item.id);
+                }
+                Console.WriteLine("#0 för att återgå till meny");
+                Console.WriteLine("\nUttag");
+                Console.Write("Ange ditt ID: ");
                 id = Console.ReadLine();
                 id = id.Trim();
-                Console.WriteLine("Lösenord: ");
+                if(id == "0")
+                {
+                    break;
+                }
+                Console.Write("Lösenord: ");
                 password = Console.ReadLine();
                 password = password.Trim();
-                foreach (var customer in customerList)
+                foreach (var customer in SingeltonCustomer.Instance.CustomerList())
                 {
                     if (customer.id == id && customer.Password == password)
                     {
@@ -49,17 +50,31 @@ namespace Bank
                     break;
                 }
                 Console.WriteLine("ID eller lösenord stämmer inte överens");
+                System.Threading.Thread.Sleep(1000);
             }
-            doWithdraw();
+            if (id != "0")
+            {
+                if (direction == 1)
+                {
+                    doWithdraw();
+                }
+                else
+                {
+                    doDeposit();
+                }
+            }
+                        Console.WriteLine("Återgår till meny...");
+            System.Threading.Thread.Sleep(1000);
         }
         private void doWithdraw()
         {
-            double amount = 0;
+            int amount = 0;
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("Ditt Saldo: " + saveCustomer.Wallet + "\n");
-                Console.WriteLine("Hur mycket vill du ta ut: ");
+                Console.WriteLine("Kund: " + saveCustomer.Name + ". ID: " + saveCustomer.id);
+                Console.WriteLine("Ditt Saldo: " + saveCustomer.Wallet + " KR\n");
+                Console.Write("Hur mycket vill du ta ut: ");
                 try
                 {
                     amount = Convert.ToInt32(Console.ReadLine());
@@ -74,12 +89,33 @@ namespace Bank
                 }
                 Console.WriteLine("Felaktigt format");
                 System.Threading.Thread.Sleep(1000);
-
             }
+            ExecuteWithdraw executeWithdraw = new ExecuteWithdraw(saveCustomer);
             executeWithdraw.Withdraw(amount, saveCustomer);
-            Console.WriteLine("Återgår till meny...");
-            System.Threading.Thread.Sleep(1000);
-            bank.OpenBank();
+        }
+        private void doDeposit()
+        {
+            int amount = 0;
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("Kund: " + saveCustomer.Name + ". ID: " + saveCustomer.id);
+                Console.WriteLine("Ditt Saldo: " + saveCustomer.Wallet + " KR\n");
+                Console.Write("Ange summa att sätta in: ");
+                try
+                {
+                    amount = Convert.ToInt32(Console.ReadLine());
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    // do nothing 
+                }
+                Console.WriteLine("Felaktigt format");
+                System.Threading.Thread.Sleep(1000);
+            }
+            ExecuteWithdraw executeWithdraw = new ExecuteWithdraw(saveCustomer);
+            executeWithdraw.Deposit(amount, saveCustomer);
         }
     }
 }

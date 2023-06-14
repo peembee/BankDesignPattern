@@ -76,7 +76,7 @@ namespace Bank
                 {
                     try
                     {
-                        Console.WriteLine("\nLägg in belopp: ");
+                        Console.Write("\nLägg in belopp: ");
                         wallet = Convert.ToDouble(Console.ReadLine());
                         if (wallet > 0)
                         {

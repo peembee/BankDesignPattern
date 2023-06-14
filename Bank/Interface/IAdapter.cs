@@ -8,6 +8,7 @@ namespace Bank.Interface
 {
     internal interface IAdapter
     {
-        void Withdraw(double amountToWithdraw, Customer getCustomer);
+        void Withdraw(int amountToWithdraw, Customer getCustomer);
+        void Deposit(int amountToWithdraw, Customer getCustomer);
     }
 }

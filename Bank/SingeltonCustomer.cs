@@ -6,13 +6,17 @@ using System.Threading.Tasks;
 
 namespace Bank
 {
-    internal class Singelton
+    internal class SingeltonCustomer
     {
-        private int withdrawCounter = 0;
-        private static Singelton myInstance;
+        private static SingeltonCustomer myInstance;
+        private List<Customer> customers;
         private static readonly object lockObject = new object();
-        private Singelton(){}
-        public static Singelton Instance
+        private SingeltonCustomer()
+        {
+            customers = new List<Customer>();
+        }
+
+        public static SingeltonCustomer Instance
         {
             get
             {
@@ -20,20 +24,22 @@ namespace Bank
                 {
                     lock (lockObject)
                     {
-                        myInstance = new Singelton();
+                        myInstance = new SingeltonCustomer();
                     }
                 }
                 return myInstance;
             }
         }
-        public void IncreaseCount()
+
+        public void AddCustomer(Customer customer)
         {
-            withdrawCounter++;
+            customers.Add(customer);
         }
 
-        public int GetCount()
+        public List<Customer> CustomerList()
         {
-            return withdrawCounter;
+            return customers;
         }
     }
 }
+

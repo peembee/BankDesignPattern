@@ -9,7 +9,6 @@ namespace Bank
 {
     public class Customer : IUser
     {
-
         public string Name { get; set; } = string.Empty;
         public string id { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
